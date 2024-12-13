@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choisissez votre YouTubeur préféré</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .choice {
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Choisissez votre YouTubeur préféré</h1>
+    <div id="game">
+        <p id="prompt">Quel YouTubeur préférez-vous ?</p>
+        <div class="choice">
+            <button id="option1"></button>
+            <button id="option2"></button>
+        </div>
+    </div>
+
+    <script>
+        // Liste de YouTubeurs
+        const youtubeurs = ["Squeezie", "Cyprien", "Norman", "Léna Situations", "Amixem", "McFly & Carlito", "Natoo", "EnjoyPhoenix"];
+
+        let currentIndex = 0;
+        let currentWinner = null;
+
+        // Elements HTML
+        const option1 = document.getElementById("option1");
+        const option2 = document.getElementById("option2");
+        const prompt = document.getElementById("prompt");
+
+        // Met à jour les boutons avec les options actuelles
+        function updateButtons() {
+            if (currentWinner === null) {
+                option1.textContent = youtubeurs[currentIndex];
+                option2.textContent = youtubeurs[currentIndex + 1];
+            } else {
+                option1.textContent = currentWinner;
+                option2.textContent = youtubeurs[currentIndex];
+            }
+        }
+
+        // Gère le choix de l'utilisateur
+        function handleChoice(winner) {
+            currentWinner = winner;
+            currentIndex++;
+
+            if (currentIndex >= youtubeurs.length) {
+                prompt.textContent = `Votre YouTubeur préféré est : ${currentWinner}!`;
+                option1.style.display = "none";
+                option2.style.display = "none";
+            } else {
+                updateButtons();
+            }
+        }
+
+        // Ajoute les gestionnaires d'événements
+        option1.addEventListener("click", () => handleChoice(option1.textContent));
+        option2.addEventListener("click", () => handleChoice(option2.textContent));
+
+        // Initialisation
+        updateButtons();
+    </script>
+</body>
+</html>
