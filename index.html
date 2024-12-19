@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choisissez votre YouTubeur préféré</title>
+    <title>Choisissez votre définition préféré</title>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -60,9 +60,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Choisissez votre YouTubeur préféré</h1>
+    <h1>Choisissez votre définition préféré</h1>
     <div id="game">
-        <p id="prompt">Quel YouTubeur préférez-vous ?</p>
+        <p id="prompt">Quel définition de la liberté préférez-vous ?</p>
         <div class="choice">
             <button id="option1"></button>
             <button id="option2"></button>
@@ -70,8 +70,8 @@
     </div>
 
     <script>
-        // Liste de YouTubeurs
-        const youtubeurs = ["Squeezie", "Cyprien", "Norman", "Léna Situations", "Amixem", "McFly & Carlito", "Natoo", "EnjoyPhoenix"];
+        // Liste des positions sur la liberté
+        const youtubeurs = ["La liberté se mesure à sa capacité à résoudre des problèmes concrets et à améliorer les conditions de vie.", "La liberté est la capacité de choisir le bien, mais elle est entravée par le péché, nécessitant la grâce divine pour être pleinement réalisée.", "La liberté se trouve dans l'obéissance aux lois que l'on s'est donné soi-même en participant à la volonté générale", "La liberté est l'affirmation créatrice de soi-même, au-delà des valeurs imposées par la société ou la morale traditionnelle.", "La liberté est le droit inviolable de chaque individu à posséder et à disposer de sa personne et de ses biens.", "La liberté est intérieure et consiste à maîtriser ses passions et à se libérer des attachements au monde extérieur", "La liberté est l'émancipation des contraintes économiques et sociales, réalisable par la transformation des structures de production.", "La liberté véritable réside dans la compréhension des lois nécessaires de la nature et dans l'acceptation rationnelle de ces déterminations.", "La liberté consiste en l'absence de contrainte extérieure, permettant à l'individu d'agir selon sa volonté tant qu'il ne nuit pas aux autres."];
 
         let currentIndex = 0;
         let currentWinner = null;
@@ -84,11 +84,11 @@
         // Met à jour les boutons avec les options actuelles
         function updateButtons() {
             if (currentWinner === null) {
-                option1.textContent = youtubeurs[currentIndex];
-                option2.textContent = youtubeurs[currentIndex + 1];
+                option1.textContent = Position[currentIndex];
+                option2.textContent = Position[currentIndex + 1];
             } else {
                 option1.textContent = currentWinner;
-                option2.textContent = youtubeurs[currentIndex];
+                option2.textContent = Position[currentIndex];
             }
         }
 
@@ -97,8 +97,8 @@
             currentWinner = winner;
             currentIndex++;
 
-            if (currentIndex >= youtubeurs.length) {
-                prompt.textContent = `Votre YouTubeur préféré est : ${currentWinner}!`;
+            if (currentIndex >= Position.length) {
+                prompt.textContent = `Votre position préféré est : ${currentWinner}!`;
                 option1.style.display = "none";
                 option2.style.display = "none";
             } else {
