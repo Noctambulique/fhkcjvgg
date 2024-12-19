@@ -87,26 +87,34 @@
             "La liberté consiste en l'absence de contrainte extérieure, permettant à l'individu d'agir selon sa volonté tant qu'il ne nuit pas aux autres."
         ];
 
-        let pairs = [];
-        let currentPairIndex = 0;
+        let usedPairs = [];
+        let currentRound = 0;
+        const maxRounds = 8;
 
-        // Génère toutes les paires possibles
-        function generatePairs() {
-            for (let i = 0; i < definitions.length; i++) {
-                for (let j = i + 1; j < definitions.length; j++) {
-                    pairs.push([i + 1, definitions[i], j + 1, definitions[j]]);
-                }
-            }
+        // Retourne un index unique non répété
+        function getRandomPair() {
+            let index1, index2;
+            do {
+                index1 = Math.floor(Math.random() * definitions.length);
+                index2 = Math.floor(Math.random() * definitions.length);
+            } while (
+                index1 === index2 || 
+                usedPairs.some(pair => (pair.includes(index1) && pair.includes(index2)))
+            );
+
+            usedPairs.push([index1, index2]);
+            return [index1, index2];
         }
 
         // Met à jour les boutons avec les options actuelles
         function updateButtons() {
-            if (currentPairIndex < pairs.length) {
-                const [num1, def1, num2, def2] = pairs[currentPairIndex];
-                option1.textContent = `${num1}. ${def1}`;
-                option2.textContent = `${num2}. ${def2}`;
+            if (currentRound < maxRounds) {
+                const [index1, index2] = getRandomPair();
+                option1.textContent = `${index1 + 1}. ${definitions[index1]}`;
+                option2.textContent = `${index2 + 1}. ${definitions[index2]}`;
+                currentRound++;
             } else {
-                prompt.textContent = `Toutes les combinaisons ont été affichées ! Merci d'avoir participé.`;
+                prompt.textContent = `Merci d'avoir choisi parmi toutes les options !`;
                 option1.style.display = "none";
                 option2.style.display = "none";
             }
@@ -114,7 +122,6 @@
 
         // Gère le choix de l'utilisateur
         function handleChoice() {
-            currentPairIndex++;
             updateButtons();
         }
 
@@ -123,8 +130,7 @@
         const option2 = document.getElementById("option2");
         const prompt = document.getElementById("prompt");
 
-        generatePairs(); // Génère toutes les combinaisons
-        updateButtons(); // Affiche la première paire
+        updateButtons();
 
         option1.addEventListener("click", handleChoice);
         option2.addEventListener("click", handleChoice);
