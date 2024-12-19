@@ -51,6 +51,7 @@
             color: white;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             word-wrap: break-word;
+            text-align: left;
         }
         button:hover {
             transform: scale(1.1);
@@ -73,7 +74,7 @@
     </div>
 
     <script>
-        // Liste des positions sur la liberté
+        // Liste des définitions
         const definitions = [
             "La liberté se mesure à sa capacité à résoudre des problèmes concrets et à améliorer les conditions de vie.",
             "La liberté est la capacité de choisir le bien, mais elle est entravée par le péché, nécessitant la grâce divine pour être pleinement réalisée.",
@@ -86,20 +87,26 @@
             "La liberté consiste en l'absence de contrainte extérieure, permettant à l'individu d'agir selon sa volonté tant qu'il ne nuit pas aux autres."
         ];
 
-        let currentIndex = 0;
+        let pairs = [];
+        let currentPairIndex = 0;
 
-        // Elements HTML
-        const option1 = document.getElementById("option1");
-        const option2 = document.getElementById("option2");
-        const prompt = document.getElementById("prompt");
+        // Génère toutes les paires possibles
+        function generatePairs() {
+            for (let i = 0; i < definitions.length; i++) {
+                for (let j = i + 1; j < definitions.length; j++) {
+                    pairs.push([i + 1, definitions[i], j + 1, definitions[j]]);
+                }
+            }
+        }
 
         // Met à jour les boutons avec les options actuelles
         function updateButtons() {
-            if (currentIndex + 1 < definitions.length) {
-                option1.textContent = definitions[currentIndex];
-                option2.textContent = definitions[currentIndex + 1];
-            } else if (currentIndex < definitions.length) {
-                prompt.textContent = `Vous avez exploré toutes les options ! Merci d'avoir participé.`;
+            if (currentPairIndex < pairs.length) {
+                const [num1, def1, num2, def2] = pairs[currentPairIndex];
+                option1.textContent = `${num1}. ${def1}`;
+                option2.textContent = `${num2}. ${def2}`;
+            } else {
+                prompt.textContent = `Toutes les combinaisons ont été affichées ! Merci d'avoir participé.`;
                 option1.style.display = "none";
                 option2.style.display = "none";
             }
@@ -107,16 +114,20 @@
 
         // Gère le choix de l'utilisateur
         function handleChoice() {
-            currentIndex += 2;
+            currentPairIndex++;
             updateButtons();
         }
 
-        // Ajoute les gestionnaires d'événements
+        // Initialisation
+        const option1 = document.getElementById("option1");
+        const option2 = document.getElementById("option2");
+        const prompt = document.getElementById("prompt");
+
+        generatePairs(); // Génère toutes les combinaisons
+        updateButtons(); // Affiche la première paire
+
         option1.addEventListener("click", handleChoice);
         option2.addEventListener("click", handleChoice);
-
-        // Initialisation
-        updateButtons();
     </script>
 </body>
 </html>
