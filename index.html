@@ -87,41 +87,41 @@
             "La liberté consiste en l'absence de contrainte extérieure, permettant à l'individu d'agir selon sa volonté tant qu'il ne nuit pas aux autres."
         ];
 
-        let usedPairs = [];
-        let currentRound = 0;
+        let currentWinner = null; // Position préférée actuelle
+        let currentRound = 0; // Compteur de tours
         const maxRounds = 8;
 
-        // Retourne un index unique non répété
-        function getRandomPair() {
-            let index1, index2;
+        // Fonction pour obtenir une nouvelle position différente de l'actuelle
+        function getNewDefinitionIndex(excludeIndex) {
+            let newIndex;
             do {
-                index1 = Math.floor(Math.random() * definitions.length);
-                index2 = Math.floor(Math.random() * definitions.length);
-            } while (
-                index1 === index2 || 
-                usedPairs.some(pair => (pair.includes(index1) && pair.includes(index2)))
-            );
-
-            usedPairs.push([index1, index2]);
-            return [index1, index2];
+                newIndex = Math.floor(Math.random() * definitions.length);
+            } while (newIndex === excludeIndex);
+            return newIndex;
         }
 
         // Met à jour les boutons avec les options actuelles
         function updateButtons() {
             if (currentRound < maxRounds) {
-                const [index1, index2] = getRandomPair();
-                option1.textContent = `${index1 + 1}. ${definitions[index1]}`;
-                option2.textContent = `${index2 + 1}. ${definitions[index2]}`;
+                const newIndex = getNewDefinitionIndex(currentWinner !== null ? definitions.indexOf(currentWinner) : -1);
+                if (currentWinner === null) {
+                    option1.textContent = `1. ${definitions[newIndex]}`;
+                    option2.textContent = `2. ${definitions[getNewDefinitionIndex(newIndex)]}`;
+                } else {
+                    option1.textContent = `1. ${currentWinner}`;
+                    option2.textContent = `2. ${definitions[newIndex]}`;
+                }
                 currentRound++;
             } else {
-                prompt.textContent = `Merci d'avoir choisi parmi toutes les options !`;
+                prompt.textContent = `Votre position préférée est : ${currentWinner}`;
                 option1.style.display = "none";
                 option2.style.display = "none";
             }
         }
 
         // Gère le choix de l'utilisateur
-        function handleChoice() {
+        function handleChoice(choice) {
+            currentWinner = choice === "option1" ? option1.textContent.slice(3) : option2.textContent.slice(3);
             updateButtons();
         }
 
@@ -132,8 +132,8 @@
 
         updateButtons();
 
-        option1.addEventListener("click", handleChoice);
-        option2.addEventListener("click", handleChoice);
+        option1.addEventListener("click", () => handleChoice("option1"));
+        option2.addEventListener("click", () => handleChoice("option2"));
     </script>
 </body>
 </html>
