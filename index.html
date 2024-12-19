@@ -75,8 +75,8 @@
     <script>
         // Liste des positions sur la liberté
         const youtubeurs = [
-            "La liberté se mesure à sa capacité à résoudre des problèmes concrets et à améliorer les conditions de vie.",
-            "La liberté est la capacité de choisir le bien, mais elle est entravée par le péché, nécessitant la grâce divine pour être pleinement réalisée.",
+            "La liberté se mesure à sa capacité à résoudre des problèmes concrets pour améliorer ses conditions de vie.",
+            "La liberté est la capacité de choisir le bien, nécessitant la grâce divine pour être pleinement réalisée.",
             "La liberté se trouve dans l'obéissance aux lois que l'on s'est données soi-même en participant à la volonté générale.",
             "La liberté est l'affirmation créatrice de soi-même, au-delà des valeurs imposées par la société ou la morale traditionnelle.",
             "La liberté est le droit inviolable de chaque individu à posséder et à disposer de sa personne et de ses biens.",
@@ -96,27 +96,21 @@
 
         // Met à jour les boutons avec les options actuelles
         function updateButtons() {
-            if (currentWinner === null) {
-                option1.textContent = youtubeurs[currentIndex];
+            if (currentIndex + 1 < youtubeurs.length) {
+                option1.textContent = currentWinner || youtubeurs[currentIndex];
                 option2.textContent = youtubeurs[currentIndex + 1];
             } else {
-                option1.textContent = currentWinner;
-                option2.textContent = youtubeurs[currentIndex];
+                prompt.textContent = `Votre position préférée est : ${currentWinner}!`;
+                option1.style.display = "none";
+                option2.style.display = "none";
             }
         }
 
         // Gère le choix de l'utilisateur
         function handleChoice(winner) {
             currentWinner = winner;
-            currentIndex++;
-
-            if (currentIndex >= youtubeurs.length) {
-                prompt.textContent = `Votre position préférée est : ${currentWinner}!`;
-                option1.style.display = "none";
-                option2.style.display = "none";
-            } else {
-                updateButtons();
-            }
+            currentIndex += currentWinner === youtubeurs[currentIndex] ? 1 : 2;
+            updateButtons();
         }
 
         // Ajoute les gestionnaires d'événements
@@ -127,4 +121,4 @@
         updateButtons();
     </script>
 </body>
-</html
+</html>
