@@ -6,14 +6,57 @@
     <title>Phrase Selector</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #ffecd2, #fcb69f);
+            color: #333;
             text-align: center;
-            margin-top: 50px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        input, button {
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #444;
+        }
+        p {
+            font-size: 1.2rem;
+        }
+        input {
             padding: 10px;
-            margin: 10px;
-            font-size: 16px;
+            width: 300px;
+            font-size: 1rem;
+            border: 2px solid #fcb69f;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: white;
+            background-color: #f76c6c;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #f54242;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: #444;
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
@@ -50,14 +93,18 @@
         function selectPhrase() {
             const input = document.getElementById('numberInput').value;
             const number = parseInt(input);
+            const resultElement = document.getElementById('result');
+
             if (isNaN(number)) {
-                document.getElementById('result').textContent = "Veuillez entrer un nombre valide.";
+                resultElement.textContent = "Veuillez entrer un nombre valide.";
+                resultElement.style.color = '#f54242';
                 return;
             }
 
             const singleDigit = getSingleDigit(number);
             const phrase = phrases[singleDigit - 1]; // Adjust for 0-based index
-            document.getElementById('result').textContent = `Phrase correspondante : ${phrase}`;
+            resultElement.textContent = `Phrase correspondante : ${phrase}`;
+            resultElement.style.color = '#444';
         }
     </script>
 </body>
