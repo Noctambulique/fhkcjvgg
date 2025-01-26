@@ -7,8 +7,8 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #ffecd2, #fcb69f);
-            color: #333;
+            background: linear-gradient(to right, #d4fc79, #96e6a1);
+            color: #2d4739;
             text-align: center;
             margin: 0;
             padding: 0;
@@ -21,7 +21,7 @@
         h1 {
             font-size: 2.5rem;
             margin-bottom: 20px;
-            color: #444;
+            color: #2d4739;
         }
         p {
             font-size: 1.2rem;
@@ -30,7 +30,7 @@
             padding: 10px;
             width: 300px;
             font-size: 1rem;
-            border: 2px solid #fcb69f;
+            border: 2px solid #96e6a1;
             border-radius: 5px;
             margin-bottom: 10px;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
@@ -39,7 +39,7 @@
             padding: 10px 20px;
             font-size: 1rem;
             color: white;
-            background-color: #f76c6c;
+            background-color: #6dbf68;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -47,13 +47,13 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #f54242;
+            background-color: #4e9f4a;
         }
         #result {
             margin-top: 20px;
             font-size: 1.5rem;
-            color: #444;
-            background: #fff;
+            color: #2d4739;
+            background: #eafaf1;
             padding: 10px 20px;
             border-radius: 10px;
             box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.2);
@@ -61,7 +61,7 @@
     </style>
 </head>
 <body>
-    <h1>Phrase Selector</h1>
+    <h1>Qu'est-ce qui te sépare ... ?</h1>
     <p>Entrez un nombre pour obtenir une phrase :</p>
     <input type="number" id="numberInput" placeholder="Entrez un nombre" />
     <button onclick="selectPhrase()">Obtenir la phrase</button>
@@ -69,7 +69,7 @@
 
     <script>
         const phrases = [
-            "Le soleil se lève à l'est.",
+            "d'une mauvaise personne ?",
             "La pluie chante sur le toit.",
             "Le vent danse dans les arbres.",
             "Les étoiles brillent dans la nuit.",
@@ -97,14 +97,14 @@
 
             if (isNaN(number)) {
                 resultElement.textContent = "Veuillez entrer un nombre valide.";
-                resultElement.style.color = '#f54242';
+                resultElement.style.color = '#e63946';
                 return;
             }
 
             const singleDigit = getSingleDigit(number);
             const phrase = phrases[singleDigit - 1]; // Adjust for 0-based index
             resultElement.textContent = `Phrase correspondante : ${phrase}`;
-            resultElement.style.color = '#444';
+            resultElement.style.color = '#2d4739';
         }
     </script>
 </body>
