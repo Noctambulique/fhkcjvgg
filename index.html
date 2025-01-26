@@ -1,131 +1,64 @@
-### index.html
- 
-<! DOCTYPE html> 
-<html lang="fr"> 
-<tête> 
-<meta charset="UTF-8">
-<title>Simulation de balle rebondissante</title> 
-< style > 
- canvas { background : #eee ; display : block ; marge : 0 auto ; } 
-</style > 
-</tête> 
-<corps> 
-<canvas id="canvas"></canvas>
- 
-<div style="align-texte :centre ; » > 
- <label for="speed">Speed :</label> 
- <input type="number » id="speed » value="5 » step="0.1 » onchange="updateSpeed(this.value) ; » désactivé> 
-  <br>
- <input type="checkbox » id="gravityToggle » checked onchange="toggleGravity(this.checked) ; » > 
-  <label for="gravityToggle">Gravity</label>
-  <br>
- <input type="checkbox » id="elasticityToggle » checked onchange="toggleElasticity(this.checked) ; » > 
- <label for="elasticityToggle">Élasticité</label> 
-</div>
- 
-<script src="script.js"></script>
-</corps> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phrase Selector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Phrase Selector</h1>
+    <p>Entrez un nombre pour obtenir une phrase :</p>
+    <input type="number" id="numberInput" placeholder="Entrez un nombre" />
+    <button onclick="selectPhrase()">Obtenir la phrase</button>
+    <p id="result"></p>
+
+    <script>
+        const phrases = [
+            "Le soleil se lève à l'est.",
+            "La pluie chante sur le toit.",
+            "Le vent danse dans les arbres.",
+            "Les étoiles brillent dans la nuit.",
+            "Le feu crépite dans l'âtre.",
+            "La rivière murmure doucement.",
+            "La neige couvre la terre de silence.",
+            "Le temps s'écoule comme une rivière.",
+            "Le désert respire la chaleur du jour."
+        ];
+
+        function getSingleDigit(number) {
+            while (number >= 10) {
+                number = number
+                    .toString()
+                    .split('')
+                    .reduce((sum, digit) => sum + parseInt(digit), 0);
+            }
+            return number;
+        }
+
+        function selectPhrase() {
+            const input = document.getElementById('numberInput').value;
+            const number = parseInt(input);
+            if (isNaN(number)) {
+                document.getElementById('result').textContent = "Veuillez entrer un nombre valide.";
+                return;
+            }
+
+            const singleDigit = getSingleDigit(number);
+            const phrase = phrases[singleDigit - 1]; // Adjust for 0-based index
+            document.getElementById('result').textContent = `Phrase correspondante : ${phrase}`;
+        }
+    </script>
+</body>
 </html>
- 
-### script.js
- 
-const canvas = document.getElementById('canvas') ; 
-const ctx = canvas.getContext('2d') ; 
-const speedInput = document.getElementById('vitesse') ; 
- 
-const audioContext = new (fenêtre. AudioContext || window.webkitAudioContext)() ; 
- 
-let ball = {
- x : canvas.width / 2, 
- y : canvas.height / 2, 
- rayon : 20, 
- dx : parseFloat(speedInput.value), 
- dy : parseFloat(speedInput.value), 
- gravité : 0,1, 
- élasticité : 0,8, 
- useGravity : true, 
- useElasticity : true 
-};
- 
-function playSound(fréquence = 440) { 
- let oscillator = audioContext.createOscillator() ; 
- oscillator.type = 'sinus' ; 
- oscillator.frequency.setValueAtTime(fréquence, audioContext.currentTime) ; 
- oscillator.connect(audioContext.destination) ; 
- oscillator.start() ; 
- oscillator.stop(audioContext.currentTime + 0.1) ; 
-}
- 
-fonction drawBall() { 
- ctx.beginPath() ; 
- ctx.arc(balle.x, balle.y, balle.rayon, 0, Math.PI*2) ; 
- ctx.fillStyle = '#0095DD' ; 
- ctx.fill() ; 
- ctx.closePath() ; 
-}
- 
-fonction updateBall() { 
-  if (ball.useGravity) {
- balle.dy += balle.gravité ; 
-  }
- balle.x += balle.dx ; 
- ball.y += balle.dy ; 
- 
- Détection de collision améliorée avec les parois 
-  if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
- balle.dx = -balle.dx ; 
- ball.x = balle.x + balle.radius > canvas.width ? canvas.width - ball.radius : ball.radius ; 
- playSound(400 + Math.random() * 200) ; 
-  }
-  if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
- ball.dy = -ball.dy * (ball.useÉlasticité ? ball.élasticité : 1) ; 
- ball.y = balle.y + balle.rayon > toile.hauteur ? canvas.height - ball.radius : ball.radius ; 
- playSound(400 + Math.random() * 200) ; 
-  }
-}
- 
-fonction draw() { 
- ctx.clearRect(0, 0, canvas.width, canvas.height) ; 
- drawBall() ; 
- updateBall() ; 
- requestAnimationFrame(dessin) ; 
-}
- 
-function toggleGravity(coché) { 
- ball.useGravity = vérifié ; 
- checkDisabled() ; 
-}
- 
-function toggleElasticity(coché) { 
- ball.useElasticity = vérifié ; 
- checkDisabled() ; 
-}
- 
-fonction checkDisabled() { 
- if ( !ball.useGravity & !ball.useElasticity) { 
- speedInput.disabled = faux ; 
- } sinon { 
- speedInput.disabled = vrai ; 
- speedInput.value = Math.sqrt(balle.dx * balle.dx + balle.dy * balle.dy).toFixed(1) ; 
-  }
-}
- 
-fonction updateSpeed(value) { 
- ball.dx = parseFloat(valeur) ; 
- ball.dy = parseFloat(valeur) ; 
-}
- 
-fonction resizeCanvas() { 
- canvas.width = window.innerWidth * 0,9 ; 
- canvas.height = window.innerHeight * 0,7 ; 
-    if (ball.x + ball.radius > canvas.width) {
- ball.x = canvas.width - balle.rayon ; 
-    }
-    if (ball.y + ball.radius > canvas.height) {
- ball.y = hauteur.toile - balle.rayon ; 
-    }
-}
- 
-resizeCanvas() ; 
-window.addEventListener('redimensionner', redimensionnerCanvas) ; 
-dessin() ; 
