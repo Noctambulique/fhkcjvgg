@@ -1,111 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu2</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #d4fc79, #96e6a1);
-            color: #2d4739;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #2d4739;
-        }
-        p {
-            font-size: 1.2rem;
-        }
-        input {
-            padding: 10px;
-            width: 300px;
-            font-size: 1rem;
-            border: 2px solid #96e6a1;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 1rem;
-            color: white;
-            background-color: #6dbf68;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #4e9f4a;
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 1.5rem;
-            color: #2d4739;
-            background: #eafaf1;
-            padding: 10px 20px;
-            border-radius: 10px;
-            box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.2);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Puzzle niveau expert</title>
+  <style>
+    body {
+      background: #fff9f4;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #d37d7d;
+    }
+
+    .puzzle {
+      display: grid;
+      grid-template-columns: repeat(6, 75px);
+      grid-template-rows: repeat(6, 75px);
+      gap: 2px;
+      justify-content: center;
+      margin: 20px auto;
+      width: 460px;
+    }
+
+    .piece {
+      width: 75px;
+      height: 75px;
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Tiger_in_Ranthambhore.jpg/450px-Tiger_in_Ranthambhore.jpg');
+      background-size: 450px 450px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      cursor: grab;
+    }
+
+    .message {
+      opacity: 0;
+      transition: opacity 1s;
+      font-size: 18px;
+      color: #b75454;
+      margin-top: 30px;
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .visible {
+      opacity: 1;
+    }
+  </style>
 </head>
 <body>
-    <h1>Qu'est-ce qui te sépare ... ?</h1>
-    <p>Entrez un nombre pour obtenir une phrase :</p>
-    <input type="number" id="numberInput" placeholder="Entrez un nombre" />
-    <button onclick="selectPhrase()">Obtenir la phrase</button>
-    <p id="result"></p>
+  <h1>Un puzzle pour les pros 🧠</h1>
 
-    <script>
-        const phrases = [
-            "d'une mauvaise personne ?",
-            "de la personne la plus heureuse du monde ?",
-            "d'être exactement la personne que tu rêves d'être ?",
-            "de quelqu’un qui n’a peur de rien ?",
-            "d'une personne qui a réalisé tous ses rêves ?",
-            "de la personne la plus triste du monde ?",
-            "de la pire version de toi-même ?",
-            "de quelqu’un qui ne ment jamais ?",
-            "d’un individu totalement en paix avec soi-même ?"
-        ];
+  <div class="puzzle" id="puzzle"></div>
 
-        function getSingleDigit(number) {
-            while (number >= 10) {
-                number = number
-                    .toString()
-                    .split('')
-                    .reduce((sum, digit) => sum + parseInt(digit), 0);
-            }
-            return number;
+  <div class="message" id="message">💖 https://discord.gg/EHABeMZ9Sh 💖</div>
+
+  <script>
+    const puzzle = document.getElementById('puzzle');
+    const message = document.getElementById('message');
+
+    const size = 6;
+    const pieceSize = 75;
+    const totalPieces = size * size;
+
+    let positions = [];
+
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        positions.push(`${-x * pieceSize}px ${-y * pieceSize}px`);
+      }
+    }
+
+    let pieces = positions.map((pos, index) => {
+      let div = document.createElement('div');
+      div.className = 'piece';
+      div.style.backgroundPosition = pos;
+      div.draggable = true;
+      div.dataset.index = index;
+      return div;
+    });
+
+    pieces.sort(() => Math.random() - 0.5);
+    pieces.forEach(piece => puzzle.appendChild(piece));
+
+    let dragged = null;
+
+    puzzle.addEventListener('dragstart', (e) => {
+      if (e.target.classList.contains('piece')) {
+        dragged = e.target;
+      }
+    });
+
+    puzzle.addEventListener('dragover', (e) => e.preventDefault());
+
+    puzzle.addEventListener('drop', (e) => {
+      if (e.target.classList.contains('piece') && dragged !== e.target) {
+        const children = Array.from(puzzle.children);
+        const draggedIndex = children.indexOf(dragged);
+        const targetIndex = children.indexOf(e.target);
+
+        if (draggedIndex > -1 && targetIndex > -1) {
+          puzzle.insertBefore(dragged, children[targetIndex]);
+          puzzle.insertBefore(e.target, children[draggedIndex]);
         }
 
-        function selectPhrase() {
-            const input = document.getElementById('numberInput').value;
-            const number = parseInt(input);
-            const resultElement = document.getElementById('result');
+        checkWin();
+      }
+    });
 
-            if (isNaN(number)) {
-                resultElement.textContent = "Veuillez entrer un nombre valide.";
-                resultElement.style.color = '#e63946';
-                return;
-            }
-
-            const singleDigit = getSingleDigit(number);
-            const phrase = phrases[singleDigit - 1]; // Adjust for 0-based index
-            resultElement.textContent = `... ${phrase}`;
-            resultElement.style.color = '#2d4739';
-        }
-    </script>
+    function checkWin() {
+      const current = Array.from(puzzle.children);
+      const correct = current.every((el, i) => +el.dataset.index === i);
+      if (correct) {
+        message.classList.add('visible');
+      }
+    }
+  </script>
 </body>
 </html>
