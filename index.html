@@ -70,8 +70,8 @@
     const message = document.getElementById("message");
     const resultat = document.getElementById("resultat");
 
-    // Déterminer si le ticket est gagnant (20% de chance)
-    const isWinner = Math.random() < 0.2;
+    // Déterminer si le ticket est gagnant (30% de chance)
+    const isWinner = Math.random() < 0.3;
     const symbols = [];
 
     if (isWinner) {
@@ -83,12 +83,12 @@
         symbols.push(Math.random() < 0.5 ? "❤️" : "❌");
       }
       if (symbols.every(s => s === "❤️")) {
-        // Pour éviter un ticket gagnant par hasard, forcer une croix
+        // Évite qu’un ticket perdant soit par hasard gagnant
         symbols[Math.floor(Math.random() * 3)] = "❌";
       }
     }
 
-    // Afficher les symboles (cachés sous la couche grise)
+    // Afficher les symboles (cachés au départ)
     cases.forEach((c, i) => {
       c.querySelector("span").textContent = symbols[i];
     });
