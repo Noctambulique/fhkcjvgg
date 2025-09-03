@@ -14,20 +14,25 @@
       margin: 0;
       font-family: sans-serif;
     }
-    #container {
-      position: relative;
-      width: 300px;
-      height: 200px;
+    h2 {
+      margin-bottom: 20px;
     }
-    #background {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: white;
+    #ticket {
+      display: flex;
+      gap: 20px;
+    }
+    .case {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      font-size: 60px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 50px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      overflow: hidden;
     }
     canvas {
       position: absolute;
@@ -35,7 +40,7 @@
       left: 0;
     }
     #message {
-      margin-top: 20px;
+      margin-top: 30px;
       display: none;
       text-align: center;
     }
@@ -48,62 +53,97 @@
 </head>
 <body>
   <h2>Gratte ton ticket 💌</h2>
-  
-  <div id="container">
-    <div id="background">❤️❤️❤️</div> <!-- ici les cœurs -->
-    <canvas id="scratch" width="300" height="200"></canvas>
+
+  <div id="ticket">
+    <div class="case"><span></span><canvas width="100" height="100"></canvas></div>
+    <div class="case"><span></span><canvas width="100" height="100"></canvas></div>
+    <div class="case"><span></span><canvas width="100" height="100"></canvas></div>
   </div>
-  
+
   <div id="message">
-    <h3>🎉 Tu as gagné mon cœur ! Je t'aime ❤️</h3>
+    <h3 id="resultat"></h3>
     <img src="ton_image.jpg" alt="Moi">
   </div>
 
   <script>
-    const canvas = document.getElementById("scratch");
-    const ctx = canvas.getContext("2d");
+    const cases = document.querySelectorAll(".case");
     const message = document.getElementById("message");
-    let isDrawing = false;
+    const resultat = document.getElementById("resultat");
 
-    // Remplir le canvas avec une couche grise (comme un ticket à gratter)
-    ctx.fillStyle = "silver";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    function getMousePos(e) {
-      const rect = canvas.getBoundingClientRect();
-      return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      };
+    // Générer aléatoirement les symboles (cœurs ou croix)
+    const symbols = [];
+    for (let i = 0; i < 3; i++) {
+      symbols.push(Math.random() < 0.5 ? "❤️" : "❌");
     }
 
-    function scratch(x, y) {
-      ctx.globalCompositeOperation = "destination-out"; 
-      ctx.beginPath();
-      ctx.arc(x, y, 20, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    canvas.addEventListener("mousedown", () => isDrawing = true);
-    canvas.addEventListener("mouseup", () => isDrawing = false);
-    canvas.addEventListener("mousemove", e => {
-      if (isDrawing) {
-        const pos = getMousePos(e);
-        scratch(pos.x, pos.y);
-        checkWin();
-      }
+    // Afficher les symboles cachés
+    cases.forEach((c, i) => {
+      c.querySelector("span").textContent = symbols[i];
     });
 
-    function checkWin() {
-      // Vérifier si assez de surface est grattée
+    let revealedCount = 0;
+
+    // Préparer chaque case avec effet "grattage"
+    cases.forEach((c, i) => {
+      const canvas = c.querySelector("canvas");
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "silver";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      let isDrawing = false;
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+      }
+
+      function scratch(x, y) {
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.beginPath();
+        ctx.arc(x, y, 15, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      canvas.addEventListener("mousedown", () => isDrawing = true);
+      canvas.addEventListener("mouseup", () => {
+        isDrawing = false;
+        checkReveal(canvas, i);
+      });
+      canvas.addEventListener("mousemove", e => {
+        if (isDrawing) {
+          const pos = getPos(e);
+          scratch(pos.x, pos.y);
+        }
+      });
+    });
+
+    function checkReveal(canvas, i) {
+      // Vérifier si assez gratté pour révéler la case
+      const ctx = canvas.getContext("2d");
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       let cleared = 0;
-      for (let i = 3; i < imageData.data.length; i += 4) {
-        if (imageData.data[i] === 0) cleared++;
+      for (let j = 3; j < imageData.data.length; j += 4) {
+        if (imageData.data[j] === 0) cleared++;
       }
       const percent = cleared / (canvas.width * canvas.height) * 100;
-      if (percent > 50) { // plus de 50% gratté
-        message.style.display = "block";
+
+      if (percent > 50 && !canvas.revealed) {
+        canvas.revealed = true;
+        revealedCount++;
+
+        // Si toutes les cases sont révélées → montrer résultat
+        if (revealedCount === 3) {
+          const hearts = symbols.filter(s => s === "❤️").length;
+          if (hearts === 3) {
+            resultat.textContent = "🎉 Tu as gagné mon cœur ! Je t'aime ❤️";
+          } else {
+            resultat.textContent = "😢 Pas de chance cette fois...";
+          }
+          message.style.display = "block";
+        }
       }
     }
   </script>
