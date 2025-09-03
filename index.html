@@ -38,6 +38,7 @@
       position: absolute;
       top: 0;
       left: 0;
+      touch-action: none; /* indispensable pour éviter le défilement pendant le grattage */
     }
     #message {
       margin-top: 30px;
@@ -75,27 +76,38 @@
     const symbols = [];
 
     if (isWinner) {
-      // Gagnant : 3 cœurs
       symbols.push("❤️", "❤️", "❤️");
     } else {
-      // Perdant : au moins une croix
       for (let i = 0; i < 3; i++) {
         symbols.push(Math.random() < 0.5 ? "❤️" : "❌");
       }
       if (symbols.every(s => s === "❤️")) {
-        // Évite qu’un ticket perdant soit par hasard gagnant
         symbols[Math.floor(Math.random() * 3)] = "❌";
       }
     }
 
-    // Afficher les symboles (cachés au départ)
+    // Remplir les cases (cachées sous la couche grise)
     cases.forEach((c, i) => {
       c.querySelector("span").textContent = symbols[i];
     });
 
     let revealedCount = 0;
 
-    // Préparer chaque case avec effet "grattage"
+    // Fonction utilitaire pour obtenir position souris ou tactile
+    function getPos(e, canvas) {
+      const rect = canvas.getBoundingClientRect();
+      let x, y;
+      if (e.touches && e.touches[0]) {
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+      } else {
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+      }
+      return { x, y };
+    }
+
+    // Préparer chaque case
     cases.forEach((c, i) => {
       const canvas = c.querySelector("canvas");
       const ctx = canvas.getContext("2d");
@@ -104,14 +116,6 @@
 
       let isDrawing = false;
 
-      function getPos(e) {
-        const rect = canvas.getBoundingClientRect();
-        return {
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top
-        };
-      }
-
       function scratch(x, y) {
         ctx.globalCompositeOperation = "destination-out";
         ctx.beginPath();
@@ -119,42 +123,17 @@
         ctx.fill();
       }
 
-      canvas.addEventListener("mousedown", () => isDrawing = true);
-      canvas.addEventListener("mouseup", () => {
-        isDrawing = false;
-        checkReveal(canvas);
+      // Souris
+      canvas.addEventListener("mousedown", e => { isDrawing = true; scratch(...Object.values(getPos(e, canvas))); });
+      canvas.addEventListener("mouseup", () => { isDrawing = false; checkReveal(canvas); });
+      canvas.addEventListener("mousemove", e => { if (isDrawing) scratch(...Object.values(getPos(e, canvas))); });
+
+      // Tactile
+      canvas.addEventListener("touchstart", e => { 
+        e.preventDefault();
+        isDrawing = true; 
+        scratch(...Object.values(getPos(e, canvas))); 
       });
-      canvas.addEventListener("mousemove", e => {
-        if (isDrawing) {
-          const pos = getPos(e);
-          scratch(pos.x, pos.y);
-        }
-      });
-    });
-
-    function checkReveal(canvas) {
-      const ctx = canvas.getContext("2d");
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      let cleared = 0;
-      for (let j = 3; j < imageData.data.length; j += 4) {
-        if (imageData.data[j] === 0) cleared++;
-      }
-      const percent = cleared / (canvas.width * canvas.height) * 100;
-
-      if (percent > 30 && !canvas.revealed) {
-        canvas.revealed = true;
-        revealedCount++;
-
-        if (revealedCount === 3) {
-          if (isWinner) {
-            resultat.textContent = "🎉 Tu as gagné mon cœur ! Je t'aime ❤️";
-          } else {
-            resultat.textContent = "😢 Pas de chance cette fois...";
-          }
-          message.style.display = "block";
-        }
-      }
-    }
-  </script>
-</body>
-</html>
+      canvas.addEventListener("touchend", e => { 
+        e.preventDefault();
+        isDrawing = false
