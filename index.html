@@ -70,13 +70,25 @@
     const message = document.getElementById("message");
     const resultat = document.getElementById("resultat");
 
-    // Générer aléatoirement les symboles (cœurs ou croix)
+    // Déterminer si le ticket est gagnant (20% de chance)
+    const isWinner = Math.random() < 0.2;
     const symbols = [];
-    for (let i = 0; i < 3; i++) {
-      symbols.push(Math.random() < 0.5 ? "❤️" : "❌");
+
+    if (isWinner) {
+      // Gagnant : 3 cœurs
+      symbols.push("❤️", "❤️", "❤️");
+    } else {
+      // Perdant : au moins une croix
+      for (let i = 0; i < 3; i++) {
+        symbols.push(Math.random() < 0.5 ? "❤️" : "❌");
+      }
+      if (symbols.every(s => s === "❤️")) {
+        // Pour éviter un ticket gagnant par hasard, forcer une croix
+        symbols[Math.floor(Math.random() * 3)] = "❌";
+      }
     }
 
-    // Afficher les symboles cachés
+    // Afficher les symboles (cachés sous la couche grise)
     cases.forEach((c, i) => {
       c.querySelector("span").textContent = symbols[i];
     });
@@ -110,7 +122,7 @@
       canvas.addEventListener("mousedown", () => isDrawing = true);
       canvas.addEventListener("mouseup", () => {
         isDrawing = false;
-        checkReveal(canvas, i);
+        checkReveal(canvas);
       });
       canvas.addEventListener("mousemove", e => {
         if (isDrawing) {
@@ -120,8 +132,7 @@
       });
     });
 
-    function checkReveal(canvas, i) {
-      // Vérifier si assez gratté pour révéler la case
+    function checkReveal(canvas) {
       const ctx = canvas.getContext("2d");
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       let cleared = 0;
@@ -134,10 +145,8 @@
         canvas.revealed = true;
         revealedCount++;
 
-        // Si toutes les cases sont révélées → montrer résultat
         if (revealedCount === 3) {
-          const hearts = symbols.filter(s => s === "❤️").length;
-          if (hearts === 3) {
+          if (isWinner) {
             resultat.textContent = "🎉 Tu as gagné mon cœur ! Je t'aime ❤️";
           } else {
             resultat.textContent = "😢 Pas de chance cette fois...";
