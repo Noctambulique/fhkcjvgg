@@ -136,4 +136,38 @@
       });
       canvas.addEventListener("touchend", e => { 
         e.preventDefault();
-        isDrawing = false
+        isDrawing = false; 
+        checkReveal(canvas); 
+      });
+      canvas.addEventListener("touchmove", e => { 
+        e.preventDefault();
+        if (isDrawing) scratch(...Object.values(getPos(e, canvas))); 
+      });
+    });
+
+    function checkReveal(canvas) {
+      const ctx = canvas.getContext("2d");
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let cleared = 0;
+      for (let j = 3; j < imageData.data.length; j += 4) {
+        if (imageData.data[j] === 0) cleared++;
+      }
+      const percent = cleared / (canvas.width * canvas.height) * 100;
+
+      if (percent > 50 && !canvas.revealed) {
+        canvas.revealed = true;
+        revealedCount++;
+
+        if (revealedCount === 3) {
+          if (isWinner) {
+            resultat.textContent = "🎉 Tu as gagné mon cœur ! Je t'aime ❤️";
+          } else {
+            resultat.textContent = "😢 Pas de chance cette fois...";
+          }
+          message.style.display = "block";
+        }
+      }
+    }
+  </script>
+</body>
+</html>
