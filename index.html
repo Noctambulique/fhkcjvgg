@@ -50,15 +50,32 @@
       display: none;
       text-align: center;
     }
+    #message h3 {
+      margin-bottom: 15px;
+    }
     #message img {
       width: 200px;
       border-radius: 15px;
       margin-top: 10px;
     }
+    #rejouer {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background: red;
+      color: white;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    #rejouer:active {
+      background: darkred;
+    }
   </style>
 </head>
 <body>
-  <!-- 🔽 Ici tu mets facilement l'image que tu veux en haut -->
+  <!-- 🔽 Image déco -->
   <img id="top-image" src="http://www.image-heberg.fr/files/17569183112533123849.png" alt="Décoration">
 
   <h2>Gratte ton ticket 💌</h2>
@@ -69,13 +86,21 @@
     <div class="case"><span></span><canvas width="100" height="100"></canvas></div>
   </div>
 
+  <div id="message">
+    <h3 id="resultat"></h3>
+    <img src="ton_image.jpg" alt="Moi">
+    <br>
+    <button id="rejouer">🔄 Rejouer</button>
+  </div>
+
   <script>
     const cases = document.querySelectorAll(".case");
     const message = document.getElementById("message");
     const resultat = document.getElementById("resultat");
+    const rejouerBtn = document.getElementById("rejouer");
 
-    // Déterminer si le ticket est gagnant (30% de chance)
-    const isWinner = Math.random() < 0.3;
+    // Déterminer si le ticket est gagnant (40% de chance)
+    const isWinner = Math.random() < 0.4;
     const symbols = [];
 
     if (isWinner) {
@@ -163,12 +188,17 @@
           if (isWinner) {
             resultat.textContent = "🎉 Tu as gagné mon cœur ! Je t'aime ❤️";
           } else {
-            resultat.textContent = "😢 Pas de chance cette fois...";
+            resultat.textContent = "😢 Pas de chance cette fois... essaie encore !";
           }
           message.style.display = "block";
         }
       }
     }
+
+    // Rejouer
+    rejouerBtn.addEventListener("click", () => {
+      location.reload();
+    });
   </script>
 </body>
 </html>
