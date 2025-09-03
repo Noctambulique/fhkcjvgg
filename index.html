@@ -88,7 +88,6 @@
 
   <div id="message">
     <h3 id="resultat"></h3>
-    <img src="ton_image.jpg" alt="Moi">
     <br>
     <button id="rejouer">🔄 Rejouer</button>
   </div>
@@ -180,7 +179,7 @@
       }
       const percent = cleared / (canvas.width * canvas.height) * 100;
 
-      if (percent > 50 && !canvas.revealed) {
+      if (percent > 40 && !canvas.revealed) {
         canvas.revealed = true;
         revealedCount++;
 
