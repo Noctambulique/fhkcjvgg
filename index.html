@@ -15,7 +15,12 @@
       font-family: sans-serif;
     }
     h2 {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+    }
+    #top-image {
+      width: 200px;
+      border-radius: 15px;
+      margin-bottom: 15px;
     }
     #ticket {
       display: flex;
@@ -38,7 +43,7 @@
       position: absolute;
       top: 0;
       left: 0;
-      touch-action: none; /* indispensable pour éviter le défilement pendant le grattage */
+      touch-action: none;
     }
     #message {
       margin-top: 30px;
@@ -46,13 +51,16 @@
       text-align: center;
     }
     #message img {
-      width: 150px;
-      border-radius: 12px;
+      width: 200px;
+      border-radius: 15px;
       margin-top: 10px;
     }
   </style>
 </head>
 <body>
+  <!-- 🔽 Ici tu mets facilement l'image que tu veux en haut -->
+  <img id="top-image" src="mon_image_deco.jpg" alt="Décoration">
+
   <h2>Gratte ton ticket 💌</h2>
 
   <div id="ticket">
@@ -63,6 +71,7 @@
 
   <div id="message">
     <h3 id="resultat"></h3>
+    <!-- 🔽 Ici tu mets facilement TA photo ou une image personnalisée -->
     <img src="ton_image.jpg" alt="Moi">
   </div>
 
@@ -86,14 +95,13 @@
       }
     }
 
-    // Remplir les cases (cachées sous la couche grise)
+    // Remplir les cases (cachées au départ)
     cases.forEach((c, i) => {
       c.querySelector("span").textContent = symbols[i];
     });
 
     let revealedCount = 0;
 
-    // Fonction utilitaire pour obtenir position souris ou tactile
     function getPos(e, canvas) {
       const rect = canvas.getBoundingClientRect();
       let x, y;
@@ -107,7 +115,6 @@
       return { x, y };
     }
 
-    // Préparer chaque case
     cases.forEach((c, i) => {
       const canvas = c.querySelector("canvas");
       const ctx = canvas.getContext("2d");
